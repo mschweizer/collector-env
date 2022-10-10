@@ -4,7 +4,7 @@
 There is a UI application which allows you to manually control the agent in the `collector-env` with the arrow keys 
 (for navigation) and the `page up`-key (for picking up an item).
 
-Run it with:
+Run it from the terminal with:
 
 ```
 git clone https://github.com/mschweizer/collector-env
