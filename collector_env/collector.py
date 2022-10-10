@@ -9,8 +9,8 @@ class CollectorEnv(MiniGridEnv):
     """
         ### Description
 
-        A single agent lives in a 7x7 gridworld environment that has two types of items, blue and red balls.
-        At every point in time, exactly one of each item type is present in the environment.
+        A single agent lives in a gridworld environment that has two types of items, blue and red balls.
+        At every point in time, exactly one instance of each item type is present in the environment.
         Initially, the agent is placed in the bottom left corner and the items are placed at random, distinct positions
         on the grid.
         The agent can pick up items.
@@ -18,10 +18,6 @@ class CollectorEnv(MiniGridEnv):
         As long as an item is not collected, it will not change its position.
         The environment is fully observable and is perceived as symbolic representation.
         Except for item placement, the environment is deterministic.
-        Episodes have constant length (e.g. 20.000 steps).
-        The agent does not perceive the end of an episode.
-        These values and the environment dynamics, are unknown to the agent, and it must learn them through the
-        standard, PbRL agent-user and agent-environment interaction protocols.
 
 
         ### Mission Space
@@ -60,12 +56,7 @@ class CollectorEnv(MiniGridEnv):
 
         ### Registered Configurations
 
-        - `MiniGrid-Empty-5x5-v0`
-        - `MiniGrid-Empty-Random-5x5-v0`
-        - `MiniGrid-Empty-6x6-v0`
-        - `MiniGrid-Empty-Random-6x6-v0`
-        - `MiniGrid-Empty-8x8-v0`
-        - `MiniGrid-Empty-16x16-v0`
+        - `Collector-v0`
 
         """
 
