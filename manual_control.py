@@ -1,10 +1,81 @@
 import gymnasium as gym
-from minigrid.manual_control import key_handler, reset
 from minigrid.utils.window import Window
 from minigrid.wrappers import RGBImgPartialObsWrapper, ImgObsWrapper
-import envs
+# noinspection PyUnresolvedReferences
+import collector_env  # import statement registers env with gym
 
-if __name__ == "__main__":
+
+def redraw(window, img, env):
+    window.show_img(img)
+    if hasattr(env, "mission"):
+        window.set_caption(env.mission)
+
+
+def reset(env, window, seed=None):
+    env.reset(seed=seed)
+
+    if hasattr(env, "mission"):
+        print("Mission: %s" % env.mission)
+        window.set_caption(env.mission)
+
+    img = env.get_frame(highlight=False)
+
+    redraw(window, img, env)
+
+
+def step(env, window, action):
+    obs, reward, terminated, truncated, info = env.step(action)
+    print(f"step={env.step_count}, reward={reward:.2f}")
+
+    if terminated:
+        print("terminated!")
+        reset(env, window)
+    elif truncated:
+        print("truncated!")
+        reset(env, window)
+    else:
+        img = env.get_frame(highlight=False)
+        redraw(window, img, env)
+
+
+def key_handler(env, window, event):
+    print("pressed", event.key)
+
+    if event.key == "escape":
+        window.close()
+        return
+
+    if event.key == "backspace":
+        reset(env, window)
+        return
+
+    if event.key == "left":
+        step(env, window, env.actions.left)
+        return
+    if event.key == "right":
+        step(env, window, env.actions.right)
+        return
+    if event.key == "up":
+        step(env, window, env.actions.forward)
+        return
+
+    # Spacebar
+    if event.key == " ":
+        step(env, window, env.actions.toggle)
+        return
+    if event.key == "pageup":
+        step(env, window, env.actions.pickup)
+        return
+    if event.key == "pagedown":
+        step(env, window, env.actions.drop)
+        return
+
+    if event.key == "enter":
+        step(env, window, env.actions.done)
+        return
+
+
+def main():
     import argparse
 
     parser = argparse.ArgumentParser()
@@ -46,3 +117,7 @@ if __name__ == "__main__":
 
     # Blocking event loop
     window.show(block=True)
+
+
+if __name__ == "__main__":
+    main()
