@@ -1,6 +1,6 @@
 import random
 
-from minigrid.minigrid_env import MiniGridEnv, Grid, Goal, MissionSpace, Ball
+from gym_minigrid.minigrid import MiniGridEnv, Grid
 
 from collector_env.valued_ball import ValuedBall
 
@@ -60,17 +60,12 @@ class CollectorEnv(MiniGridEnv):
 
         """
 
-    def __init__(self, size=7, agent_start_pos=(1, 1), agent_start_dir=0, value_update_interval=None, **kwargs):
+    def __init__(self, size=8, agent_start_pos=(1, 1), agent_start_dir=0, value_update_interval=None, **kwargs):
         self.agent_start_pos = agent_start_pos
         self.agent_start_dir = agent_start_dir
         self.value_update_interval = value_update_interval
 
-        mission_space = MissionSpace(
-            mission_func=lambda: "collect valuable items"
-        )
-
         super().__init__(
-            mission_space=mission_space,
             grid_size=size,
             max_steps=4 * size * size,
             # Set this to True for maximum speed
@@ -104,7 +99,7 @@ class CollectorEnv(MiniGridEnv):
         return "Current object valuations: {}, {}".format(self.objects[0], self.objects[1])
 
     def step(self, action):
-        obs, reward, terminated, truncated, info = super().step(action)
+        obs, reward, terminated, info = super().step(action)
 
         if self.carrying:
             reward = self.carrying.value
@@ -117,7 +112,7 @@ class CollectorEnv(MiniGridEnv):
                 self._switch_object_values()
                 self.mission = self._create_mission_statement()
 
-        return obs, reward, terminated, truncated, info
+        return obs, reward, terminated, info
 
     def _replace_item(self):
         picked_up_item = self.carrying

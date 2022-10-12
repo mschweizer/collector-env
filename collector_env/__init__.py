@@ -1,4 +1,4 @@
-from gymnasium import register
+from gym import register
 from collector_env.collector import CollectorEnv
 
 register(

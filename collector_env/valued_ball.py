@@ -1,4 +1,4 @@
-from minigrid.minigrid_env import Ball
+from gym_minigrid.minigrid import Ball
 
 
 class ValuedBall(Ball):
@@ -8,4 +8,3 @@ class ValuedBall(Ball):
 
     def __str__(self):
         return "Ball (color: {color}, value: {value})".format(color=self.color, value=self.value)
-

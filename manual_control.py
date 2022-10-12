@@ -1,41 +1,38 @@
-import gymnasium as gym
-from minigrid.utils.window import Window
-from minigrid.wrappers import RGBImgPartialObsWrapper, ImgObsWrapper
+import gym
+
 # noinspection PyUnresolvedReferences
+from gym_minigrid.window import Window
+from gym_minigrid.wrappers import RGBImgPartialObsWrapper, ImgObsWrapper
+
 import collector_env  # import statement registers env with gym
 
 
-def redraw(window, img, env):
-    window.show_img(img)
+def redraw(window, env):
+    img = env.render('rgb_array', tile_size=32, highlight=False)
     if hasattr(env, "mission"):
         window.set_caption(env.mission)
+    window.show_img(img)
 
 
-def reset(env, window, seed=None):
-    env.reset(seed=seed)
+def reset(env, window):
+    env.reset()
 
     if hasattr(env, "mission"):
         print("Mission: %s" % env.mission)
         window.set_caption(env.mission)
 
-    img = env.get_frame(highlight=False)
-
-    redraw(window, img, env)
+    redraw(window, env)
 
 
 def step(env, window, action):
-    obs, reward, terminated, truncated, info = env.step(action)
+    obs, reward, terminated, info = env.step(action)
     print(f"step={env.step_count}, reward={reward:.2f}")
 
     if terminated:
         print("terminated!")
         reset(env, window)
-    elif truncated:
-        print("truncated!")
-        reset(env, window)
     else:
-        img = env.get_frame(highlight=False)
-        redraw(window, img, env)
+        redraw(window, env)
 
 
 def key_handler(env, window, event):
@@ -100,10 +97,7 @@ def main():
 
     args = parser.parse_args()
 
-    env = gym.make(
-        args.env,
-        tile_size=args.tile_size,
-    )
+    env = gym.make(args.env)
 
     if args.agent_view:
         env = RGBImgPartialObsWrapper(env)
@@ -112,8 +106,7 @@ def main():
     window = Window("minigrid - " + args.env)
     window.reg_key_handler(lambda event: key_handler(env, window, event))
 
-    seed = None if args.seed == -1 else args.seed
-    reset(env, window, seed)
+    reset(env, window)
 
     # Blocking event loop
     window.show(block=True)
