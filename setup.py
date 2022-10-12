@@ -15,5 +15,5 @@ setup(name='collector-env',
           'matplotlib==3.5.1',
       ],
       include_package_data=True,
-      python_requires='>=3.9',
+      python_requires='>=3.7',
       )
