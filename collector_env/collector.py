@@ -138,3 +138,14 @@ class CollectorEnv(MiniGridEnv):
             obj.value = -1.0
         else:
             obj.value = 1.0
+
+
+class CollectorEnv7x7(CollectorEnv):
+    def __init__(self):
+        super().__init__(size=7, max_steps=200)
+
+
+class CollectorEnv5x5(CollectorEnv):
+    def __init__(self):
+        super().__init__(size=5, max_steps=200)
+
