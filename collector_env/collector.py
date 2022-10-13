@@ -60,14 +60,18 @@ class CollectorEnv(MiniGridEnv):
 
         """
 
-    def __init__(self, size=8, agent_start_pos=(1, 1), agent_start_dir=0, value_update_interval=None, **kwargs):
+    def __init__(self, size=7, agent_start_pos=(1, 1), agent_start_dir=0, value_update_interval=None, max_steps=None,
+                 **kwargs):
+        self.mission = None
         self.agent_start_pos = agent_start_pos
         self.agent_start_dir = agent_start_dir
         self.value_update_interval = value_update_interval
 
+        max_steps = max_steps if max_steps else 4 * size * size
+
         super().__init__(
             grid_size=size,
-            max_steps=4 * size * size,
+            max_steps=max_steps,
             # Set this to True for maximum speed
             see_through_walls=True,
             **kwargs
