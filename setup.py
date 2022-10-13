@@ -14,6 +14,10 @@ setup(name='collector-env',
           'gym==0.21',
           'matplotlib==3.5.1',
       ],
+      tests_require=[
+          'pytest',
+          'pytest-cov',
+      ],
       include_package_data=True,
       python_requires='>=3.7',
       )
