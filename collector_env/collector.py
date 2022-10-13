@@ -93,7 +93,7 @@ class CollectorEnv(MiniGridEnv):
 
         # Place a red and blue ball at random positions on the grid
         self.objects = [ValuedBall("red"), ValuedBall("blue")]
-        self._assign_values()
+        self._assign_initial_values()
         for obj in self.objects:
             self.place_obj(obj)
 
@@ -123,9 +123,9 @@ class CollectorEnv(MiniGridEnv):
         self.carrying = None
         self.place_obj(picked_up_item)
 
-    def _assign_values(self):
+    def _assign_initial_values(self):
         assert len(self.objects) == 2, "Expected exactly 2 object types, found {}".format(len(self.objects))
-        selected_obj = random.choice(self.objects)
+        selected_obj = self.objects[0]
         for obj in self.objects:
             if obj == selected_obj:
                 obj.value = 1.0
