@@ -2,7 +2,7 @@ import random
 
 from gym_minigrid.minigrid import MiniGridEnv, Grid
 
-from collector_env.valued_ball import ValuedBall
+from collector_env.valued_objects import ValuedBall, ValuedKey
 
 
 class CollectorEnv(MiniGridEnv):
@@ -92,7 +92,7 @@ class CollectorEnv(MiniGridEnv):
             self.place_agent()
 
         # Place a red and blue ball at random positions on the grid
-        self.objects = [ValuedBall("red"), ValuedBall("blue")]
+        self.objects = [ValuedKey("green"), ValuedBall("blue")]
         self._assign_initial_values()
         for obj in self.objects:
             self.place_obj(obj)
