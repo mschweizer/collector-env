@@ -1,9 +1,9 @@
 import gym
 
-# noinspection PyUnresolvedReferences
 from gym_minigrid.window import Window
 from gym_minigrid.wrappers import RGBImgPartialObsWrapper, ImgObsWrapper
 
+# noinspection PyUnresolvedReferences
 import collector_env  # import statement registers env with gym
 
 

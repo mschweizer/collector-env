@@ -3,7 +3,7 @@ import random
 from gym_minigrid.minigrid import MiniGridEnv, Grid
 from gym.spaces import Discrete
 
-from collector_env.valued_ball import ValuedBall
+from collector_env.valued_objects import ValuedBall, ValuedKey
 
 
 class CollectorEnv(MiniGridEnv):
@@ -61,14 +61,18 @@ class CollectorEnv(MiniGridEnv):
 
         """
 
-    def __init__(self, size=8, agent_start_pos=(1, 1), agent_start_dir=0, value_update_interval=None, **kwargs):
+    def __init__(self, size=7, agent_start_pos=(1, 1), agent_start_dir=0, value_update_interval=None, max_steps=None,
+                 **kwargs):
+        self.mission = None
         self.agent_start_pos = agent_start_pos
         self.agent_start_dir = agent_start_dir
         self.value_update_interval = value_update_interval
 
+        max_steps = max_steps if max_steps else 4 * size * size
+
         super().__init__(
             grid_size=size,
-            max_steps=4 * size * size,
+            max_steps=max_steps,
             # Set this to True for maximum speed
             see_through_walls=True,
             **kwargs
@@ -92,8 +96,8 @@ class CollectorEnv(MiniGridEnv):
             self.place_agent()
 
         # Place a red and blue ball at random positions on the grid
-        self.objects = [ValuedBall("red"), ValuedBall("blue")]
-        self._assign_values()
+        self.objects = [ValuedKey("green"), ValuedBall("blue")]
+        self._assign_initial_values()
         for obj in self.objects:
             self.place_obj(obj)
 
@@ -123,9 +127,9 @@ class CollectorEnv(MiniGridEnv):
         self.carrying = None
         self.place_obj(picked_up_item)
 
-    def _assign_values(self):
+    def _assign_initial_values(self):
         assert len(self.objects) == 2, "Expected exactly 2 object types, found {}".format(len(self.objects))
-        selected_obj = random.choice(self.objects)
+        selected_obj = self.objects[0]
         for obj in self.objects:
             if obj == selected_obj:
                 obj.value = 1.0
@@ -142,3 +146,14 @@ class CollectorEnv(MiniGridEnv):
             obj.value = -1.0
         else:
             obj.value = 1.0
+
+
+class CollectorEnv7x7(CollectorEnv):
+    def __init__(self):
+        super().__init__(size=7, max_steps=200)
+
+
+class CollectorEnv5x5(CollectorEnv):
+    def __init__(self):
+        super().__init__(size=5, max_steps=200)
+
