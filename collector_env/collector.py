@@ -1,6 +1,7 @@
 from gym.spaces import Discrete
 from gym.vector.utils import spaces
 from gym_minigrid.minigrid import MiniGridEnv, Grid
+from gym.spaces import Discrete
 
 from collector_env.actions import Actions
 from collector_env.valued_objects import ValuedBall, ValuedKey
@@ -84,6 +85,9 @@ class CollectorEnv(MiniGridEnv):
         )
         self.actions = Actions
         self.action_space = Discrete(len(self.actions))
+
+        # Only allow the 4 used actions
+        self.action_space = Discrete(4)
 
     def _gen_grid(self, width, height):
         # Create an empty grid
