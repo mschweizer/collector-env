@@ -1,6 +1,7 @@
 import random
 
 from gym_minigrid.minigrid import MiniGridEnv, Grid
+from gym.spaces import Discrete
 
 from collector_env.valued_ball import ValuedBall
 
@@ -72,6 +73,9 @@ class CollectorEnv(MiniGridEnv):
             see_through_walls=True,
             **kwargs
         )
+
+        # Only allow the 4 used actions
+        self.action_space = Discrete(4)
 
     def _gen_grid(self, width, height):
         # Create an empty grid
