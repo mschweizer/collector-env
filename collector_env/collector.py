@@ -1,7 +1,5 @@
-import random
-
-from gym_minigrid.minigrid import MiniGridEnv, Grid
 from gym.spaces import Discrete
+from gym_minigrid.minigrid import MiniGridEnv, Grid
 
 from collector_env.valued_objects import ValuedBall, ValuedKey
 
@@ -33,9 +31,6 @@ class CollectorEnv(MiniGridEnv):
         | 1   | right        | Turn right           |
         | 2   | forward      | Move forward         |
         | 3   | pickup       | Pick up an object    |
-        | 4   | drop         | Unused               |
-        | 5   | toggle       | Unused               |
-        | 6   | done         | Unused               |
 
         ### Observation Encoding
 
@@ -156,4 +151,3 @@ class CollectorEnv7x7(CollectorEnv):
 class CollectorEnv5x5(CollectorEnv):
     def __init__(self):
         super().__init__(size=5, max_steps=200)
-
