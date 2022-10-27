@@ -58,11 +58,21 @@ class CollectorEnv(MiniGridEnv):
 
         """
 
-    def __init__(self, size=7, agent_start_pos=(1, 1), agent_start_dir=0, value_update_interval=None, max_steps=None,
-                 **kwargs):
+    def __init__(self,
+                 size=7,
+                 agent_start_pos=(1, 1),
+                 agent_start_dir=0,
+                 positive_rew=1,
+                 negative_rew=-1,
+                 value_update_interval=None,
+                 max_steps=None,
+                 **kwargs
+                 ):
         self.mission = None
         self.agent_start_pos = agent_start_pos
         self.agent_start_dir = agent_start_dir
+        self.positive_object_rew = positive_rew,
+        self.negative_object_rew = negative_rew,
         self.value_update_interval = value_update_interval
 
         max_steps = max_steps if max_steps else 4 * size * size
@@ -93,8 +103,11 @@ class CollectorEnv(MiniGridEnv):
             self.place_agent()
 
         # Place a red and blue ball at random positions on the grid
-        self.objects = [ValuedKey("green"), ValuedBall("blue")]
-        self._assign_initial_values()
+        self.objects = [
+            ValuedKey("green", value=self.positive_object_rew),
+            ValuedBall("blue", value=self.negative_object_rew)
+        ]
+
         for obj in self.objects:
             self.place_obj(obj)
 
@@ -124,15 +137,6 @@ class CollectorEnv(MiniGridEnv):
         self.carrying = None
         self.place_obj(picked_up_item)
 
-    def _assign_initial_values(self):
-        assert len(self.objects) == 2, "Expected exactly 2 object types, found {}".format(len(self.objects))
-        selected_obj = self.objects[0]
-        for obj in self.objects:
-            if obj == selected_obj:
-                obj.value = 1.0
-            else:
-                obj.value = -1.0
-
     def _switch_object_values(self):
         for obj in self.objects:
             self._switch_value(obj)
@@ -146,10 +150,10 @@ class CollectorEnv(MiniGridEnv):
 
 
 class CollectorEnv7x7(CollectorEnv):
-    def __init__(self):
-        super().__init__(size=7, max_steps=200)
+    def __init__(self, positive_rew=1, negative_rew=-1):
+        super().__init__(size=7, max_steps=200, positive_rew=positive_rew, negative_rew=negative_rew)
 
 
 class CollectorEnv5x5(CollectorEnv):
-    def __init__(self):
-        super().__init__(size=5, max_steps=200)
+    def __init__(self, positive_rew=1, negative_rew=-1, max_steps=200):
+        super().__init__(size=5, max_steps=max_steps, positive_rew=positive_rew, negative_rew=negative_rew)
