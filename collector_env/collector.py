@@ -62,8 +62,8 @@ class CollectorEnv(MiniGridEnv):
                  size=7,
                  agent_start_pos=(1, 1),
                  agent_start_dir=0,
-                 positive_rew=1,
-                 negative_rew=-1,
+                 positive_rew: float = 1.0,
+                 negative_rew: float = -1.0,
                  value_update_interval=None,
                  max_steps=None,
                  **kwargs
@@ -71,8 +71,8 @@ class CollectorEnv(MiniGridEnv):
         self.mission = None
         self.agent_start_pos = agent_start_pos
         self.agent_start_dir = agent_start_dir
-        self.positive_object_rew = positive_rew,
-        self.negative_object_rew = negative_rew,
+        self.positive_object_rew = positive_rew
+        self.negative_object_rew = negative_rew
         self.value_update_interval = value_update_interval
 
         max_steps = max_steps if max_steps else 4 * size * size
@@ -141,19 +141,18 @@ class CollectorEnv(MiniGridEnv):
         for obj in self.objects:
             self._switch_value(obj)
 
-    @staticmethod
-    def _switch_value(obj):
-        if obj.value == 1.0:
-            obj.value = -1.0
+    def _switch_value(self, obj):
+        if obj.value == self.positive_object_rew:
+            obj.value = self.negative_object_rew
         else:
-            obj.value = 1.0
+            obj.value = self.positive_object_rew
 
 
 class CollectorEnv7x7(CollectorEnv):
-    def __init__(self, positive_rew=1, negative_rew=-1):
+    def __init__(self, positive_rew: float = 1., negative_rew: float = -1.):
         super().__init__(size=7, max_steps=200, positive_rew=positive_rew, negative_rew=negative_rew)
 
 
 class CollectorEnv5x5(CollectorEnv):
-    def __init__(self, positive_rew=1, negative_rew=-1, max_steps=200):
+    def __init__(self, positive_rew: float = 1., negative_rew: float = -1., max_steps=200):
         super().__init__(size=5, max_steps=max_steps, positive_rew=positive_rew, negative_rew=negative_rew)
