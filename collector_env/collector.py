@@ -8,7 +8,7 @@ class CollectorEnv(MiniGridEnv):
     """
         ### Description
 
-        A single agent lives in a gridworld environment that has two types of items, blue and red balls.
+        A single agent lives in a gridworld environment that has two types of items, blue balls and green keys.
         At every point in time, exactly one instance of each item type is present in the environment.
         Initially, the agent is placed in the bottom left corner and the items are placed at random, distinct positions
         on the grid.
@@ -42,9 +42,10 @@ class CollectorEnv(MiniGridEnv):
 
         ### Rewards
 
-        The value of blue and red balls is either -1 or 1.
-        It switches in regular intervals given by `value_update_interval`.
+        There are two possible item values, by default -1 and 1.
         Whenever one type has value 1, the other has value -1.
+        The value of the items switch in regular intervals, given by `value_update_interval`,
+        in our example from 1 to -1 or vice versa.
 
         ### Termination
 
@@ -52,7 +53,8 @@ class CollectorEnv(MiniGridEnv):
 
         ### Registered Configurations
 
-        - `Collector-v0`
+        - `Collector-5x5-v0`
+        - `Collector-7x7-v0`
 
         """
 
