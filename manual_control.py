@@ -5,6 +5,7 @@ from gym_minigrid.wrappers import RGBImgPartialObsWrapper, ImgObsWrapper
 
 # noinspection PyUnresolvedReferences
 import collector_env  # import statement registers env with gym
+from utils import StoreDict
 
 
 def redraw(window, env):
@@ -94,10 +95,20 @@ def main():
         help="draw the agent sees (partially observable view)",
         action="store_true",
     )
+    # noinspection PyTypeChecker
+    parser.add_argument(
+        "--env_kwargs",
+        default=None,
+        type=str,
+        nargs="+",
+        help="Keyword arguments passed to the environment constructor to modify the environment, "
+             "e.g. positive_rew:10 negative_rew:-10",
+        action=StoreDict
+    )
 
     args = parser.parse_args()
 
-    env = gym.make(args.env)
+    env = gym.make(args.env, **args.env_kwargs)
 
     if args.agent_view:
         env = RGBImgPartialObsWrapper(env)

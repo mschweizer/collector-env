@@ -59,21 +59,17 @@ class CollectorEnv(MiniGridEnv):
 
         """
 
-    def __init__(self,
-                 size=7,
-                 agent_start_pos=(1, 1),
-                 agent_start_dir=0,
-                 positive_rew: float = 1.0,
-                 negative_rew: float = -1.0,
-                 value_update_interval=None,
-                 max_steps=None,
-                 **kwargs
-                 ):
+    def __init__(self, size=7, agent_start_pos=(1, 1), agent_start_dir=0, positive_object_reward: float = 1.0,
+                 negative_object_reward: float = -1.0, turn_reward=0., move_reward=0., bump_reward=0.,
+                 value_update_interval=None, max_steps=None, **kwargs):
         self.mission = None
         self.agent_start_pos = agent_start_pos
         self.agent_start_dir = agent_start_dir
-        self.positive_object_reward = positive_rew
-        self.negative_object_reward = negative_rew
+        self.positive_object_reward = positive_object_reward
+        self.negative_object_reward = negative_object_reward
+        self.turn_reward = turn_reward
+        self.move_reward = move_reward
+        self.bump_reward = bump_reward
         self.value_update_interval = value_update_interval
 
         max_steps = max_steps if max_steps else 4 * size * size
@@ -117,13 +113,13 @@ class CollectorEnv(MiniGridEnv):
         return "Current object valuations: {}, {}".format(self.objects[0], self.objects[1])
 
     def step(self, action):
-        observation, reward, terminated, info = super().step(action)
+        reward = self._compute_reward(action)
+
+        observation, _, terminated, info = super().step(action)
 
         if self.carrying:
-            reward = self.carrying.value
+            info["pickup"] = True
             self._replace_item()
-        else:
-            reward = 0.0
 
         if self.value_update_interval:
             if self.step_count % self.value_update_interval == 0:
@@ -131,6 +127,21 @@ class CollectorEnv(MiniGridEnv):
                 self.mission = self._create_mission_statement()
 
         return observation, reward, terminated, info
+
+    def _compute_reward(self, action):
+        if self.carrying:
+            reward = self.carrying.value
+        elif action in (self.actions.left, self.actions.right):
+            reward = self.turn_reward
+        elif action == self.actions.forward:
+            forward_cell = self.grid.get(*self.front_pos)
+            if forward_cell is not None and not forward_cell.can_overlap():
+                reward = self.bump_reward
+            else:
+                reward = self.move_reward
+        else:
+            reward = 0.0
+        return reward
 
     def _replace_item(self):
         picked_up_item = self.carrying
@@ -149,10 +160,16 @@ class CollectorEnv(MiniGridEnv):
 
 
 class CollectorEnv7x7(CollectorEnv):
-    def __init__(self, positive_reward: float = 1., negative_reward: float = -1.):
-        super().__init__(size=7, max_steps=200, positive_rew=positive_reward, negative_rew=negative_reward)
+    def __init__(self, positive_object_reward: float = 1.0, negative_object_reward: float = -1.0, turn_reward=0.,
+                 move_reward=0., bump_reward=0., max_steps=200):
+        super().__init__(size=7, positive_object_reward=positive_object_reward,
+                         negative_object_reward=negative_object_reward, turn_reward=turn_reward,
+                         move_reward=move_reward, bump_reward=bump_reward, max_steps=max_steps)
 
 
 class CollectorEnv5x5(CollectorEnv):
-    def __init__(self, positive_reward: float = 1., negative_reward: float = -1., max_steps=200):
-        super().__init__(size=5, max_steps=max_steps, positive_rew=positive_reward, negative_rew=negative_reward)
+    def __init__(self, positive_object_reward: float = 1.0, negative_object_reward: float = -1.0, turn_reward=0.,
+                 move_reward=0., bump_reward=0., max_steps=200):
+        super().__init__(size=5, positive_object_reward=positive_object_reward,
+                         negative_object_reward=negative_object_reward, turn_reward=turn_reward,
+                         move_reward=move_reward, bump_reward=bump_reward, max_steps=max_steps)
