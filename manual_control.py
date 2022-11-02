@@ -60,7 +60,7 @@ def key_handler(env, window, event):
     if event.key == " ":
         step(env, window, env.actions.toggle)
         return
-    if event.key == "pageup":
+    if event.key == "pageup" or event.key == "c":
         step(env, window, env.actions.pickup)
         return
     if event.key == "pagedown":
