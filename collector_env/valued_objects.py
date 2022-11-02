@@ -1,4 +1,4 @@
-from gym_minigrid.minigrid import Ball, Key, WorldObj
+from gym_minigrid.minigrid import Ball, Key
 
 
 class ValuedBall(Ball):

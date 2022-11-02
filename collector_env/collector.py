@@ -71,8 +71,8 @@ class CollectorEnv(MiniGridEnv):
         self.mission = None
         self.agent_start_pos = agent_start_pos
         self.agent_start_dir = agent_start_dir
-        self.positive_object_rew = positive_rew
-        self.negative_object_rew = negative_rew
+        self.positive_object_reward = positive_rew
+        self.negative_object_reward = negative_rew
         self.value_update_interval = value_update_interval
 
         max_steps = max_steps if max_steps else 4 * size * size
@@ -104,8 +104,8 @@ class CollectorEnv(MiniGridEnv):
 
         # Place a red and blue ball at random positions on the grid
         self.objects = [
-            ValuedKey("green", value=self.positive_object_rew),
-            ValuedBall("blue", value=self.negative_object_rew)
+            ValuedKey("green", value=self.positive_object_reward),
+            ValuedBall("blue", value=self.negative_object_reward)
         ]
 
         for obj in self.objects:
@@ -117,7 +117,7 @@ class CollectorEnv(MiniGridEnv):
         return "Current object valuations: {}, {}".format(self.objects[0], self.objects[1])
 
     def step(self, action):
-        obs, reward, terminated, info = super().step(action)
+        observation, reward, terminated, info = super().step(action)
 
         if self.carrying:
             reward = self.carrying.value
@@ -130,7 +130,7 @@ class CollectorEnv(MiniGridEnv):
                 self._switch_object_values()
                 self.mission = self._create_mission_statement()
 
-        return obs, reward, terminated, info
+        return observation, reward, terminated, info
 
     def _replace_item(self):
         picked_up_item = self.carrying
@@ -142,17 +142,17 @@ class CollectorEnv(MiniGridEnv):
             self._switch_value(obj)
 
     def _switch_value(self, obj):
-        if obj.value == self.positive_object_rew:
-            obj.value = self.negative_object_rew
+        if obj.value == self.positive_object_reward:
+            obj.value = self.negative_object_reward
         else:
-            obj.value = self.positive_object_rew
+            obj.value = self.positive_object_reward
 
 
 class CollectorEnv7x7(CollectorEnv):
-    def __init__(self, positive_rew: float = 1., negative_rew: float = -1.):
-        super().__init__(size=7, max_steps=200, positive_rew=positive_rew, negative_rew=negative_rew)
+    def __init__(self, positive_reward: float = 1., negative_reward: float = -1.):
+        super().__init__(size=7, max_steps=200, positive_rew=positive_reward, negative_rew=negative_reward)
 
 
 class CollectorEnv5x5(CollectorEnv):
-    def __init__(self, positive_rew: float = 1., negative_rew: float = -1., max_steps=200):
-        super().__init__(size=5, max_steps=max_steps, positive_rew=positive_rew, negative_rew=negative_rew)
+    def __init__(self, positive_reward: float = 1., negative_reward: float = -1., max_steps=200):
+        super().__init__(size=5, max_steps=max_steps, positive_rew=positive_reward, negative_rew=negative_reward)
