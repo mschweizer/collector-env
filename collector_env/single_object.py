@@ -1,3 +1,4 @@
+from gym.spaces import Discrete
 from gym_minigrid.minigrid import MiniGridEnv, Grid
 
 from collector_env import ValuedBall
@@ -14,6 +15,9 @@ class SingleObjectEnv(MiniGridEnv):
 
         super().__init__(grid_size=size, max_steps=max_steps, see_through_walls=True, **kwargs)
 
+        # Only allow the 4 used actions
+        self.action_space = Discrete(4)
+
     def _gen_grid(self, width, height):
         # Create an empty grid
         self.grid = Grid(width, height)
@@ -28,7 +32,7 @@ class SingleObjectEnv(MiniGridEnv):
         else:
             self.place_agent()
 
-        # Place a red and blue ball at random positions on the grid
+        # Place a blue ball at a random position on the grid
         self.objects = [
             ValuedBall("blue", value=self.collection_reward)
         ]
