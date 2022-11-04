@@ -1,4 +1,5 @@
 from gym.spaces import Discrete
+from gym.vector.utils import spaces
 from gym_minigrid.minigrid import MiniGridEnv, Grid
 
 from collector_env.actions import Actions
@@ -174,3 +175,10 @@ class CollectorEnv5x5(CollectorEnv):
         super().__init__(size=5, positive_object_reward=positive_object_reward,
                          negative_object_reward=negative_object_reward, turn_reward=turn_reward,
                          move_reward=move_reward, bump_reward=bump_reward, max_steps=max_steps)
+
+        self.observation_space.spaces["image"] = spaces.Box(
+            low=0,
+            high=255,
+            shape=(5, 5, 3),
+            dtype='uint8'
+        )
