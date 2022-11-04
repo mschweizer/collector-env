@@ -98,7 +98,7 @@ def main():
     # noinspection PyTypeChecker
     parser.add_argument(
         "--env_kwargs",
-        default=None,
+        default={},
         type=str,
         nargs="+",
         help="Keyword arguments passed to the environment constructor to modify the environment, "
