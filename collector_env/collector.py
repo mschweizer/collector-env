@@ -113,9 +113,11 @@ class CollectorEnv(MiniGridEnv):
         return "Current object valuations: {}, {}".format(self.objects[0], self.objects[1])
 
     def step(self, action):
-        reward = self._compute_reward(action)
+        forward_cell = self.grid.get(*self.front_pos)
 
         observation, _, terminated, info = super().step(action)
+
+        reward = self._compute_reward(action, forward_cell)
 
         if self.carrying:
             info["pickup"] = True
@@ -128,13 +130,12 @@ class CollectorEnv(MiniGridEnv):
 
         return observation, reward, terminated, info
 
-    def _compute_reward(self, action):
+    def _compute_reward(self, action, forward_cell):
         if self.carrying:
             reward = self.carrying.value
         elif action in (self.actions.left, self.actions.right):
             reward = self.turn_reward
         elif action == self.actions.forward:
-            forward_cell = self.grid.get(*self.front_pos)
             if forward_cell is not None and not forward_cell.can_overlap():
                 reward = self.bump_reward
             else:
