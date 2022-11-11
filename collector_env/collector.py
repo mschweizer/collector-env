@@ -167,18 +167,20 @@ class CollectorEnv(MiniGridEnv):
 
 class CollectorEnv7x7(CollectorEnv):
     def __init__(self, positive_object_reward: float = 1.0, negative_object_reward: float = -1.0, turn_reward=0.,
-                 move_reward=0., bump_reward=0., max_steps=200):
+                 move_reward=0., bump_reward=0., max_steps=200, value_update_interval=None):
         super().__init__(size=7, positive_object_reward=positive_object_reward,
                          negative_object_reward=negative_object_reward, turn_reward=turn_reward,
-                         move_reward=move_reward, bump_reward=bump_reward, max_steps=max_steps)
+                         move_reward=move_reward, bump_reward=bump_reward, max_steps=max_steps,
+                         value_update_interval=value_update_interval)
 
 
 class CollectorEnv5x5(CollectorEnv):
     def __init__(self, positive_object_reward: float = 1.0, negative_object_reward: float = -1.0, turn_reward=0.,
-                 move_reward=0., bump_reward=0., max_steps=200):
+                 move_reward=0., bump_reward=0., max_steps=200, value_update_interval=None):
         super().__init__(size=5, positive_object_reward=positive_object_reward,
                          negative_object_reward=negative_object_reward, turn_reward=turn_reward,
-                         move_reward=move_reward, bump_reward=bump_reward, max_steps=max_steps)
+                         move_reward=move_reward, bump_reward=bump_reward, max_steps=max_steps,
+                         value_update_interval=value_update_interval)
 
         self.observation_space.spaces["image"] = spaces.Box(
             low=0,
