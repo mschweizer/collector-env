@@ -69,6 +69,8 @@ class CollectorEnv(MiniGridEnv):
         self.agent_start_dir = agent_start_dir
         self.positive_object_reward = positive_object_reward
         self.negative_object_reward = negative_object_reward
+        self.key_reward = self.positive_object_reward
+        self.ball_reward = self.negative_object_reward
         self.turn_reward = turn_reward
         self.move_reward = move_reward
         self.bump_reward = bump_reward
@@ -89,6 +91,8 @@ class CollectorEnv(MiniGridEnv):
         # Only allow the 4 used actions
         self.action_space = Discrete(4)
 
+        self.total_step_count = 0
+
     def _gen_grid(self, width, height):
         # Create an empty grid
         self.grid = Grid(width, height)
@@ -103,10 +107,10 @@ class CollectorEnv(MiniGridEnv):
         else:
             self.place_agent()
 
-        # Place a red and blue ball at random positions on the grid
+        # Place two objects at random positions on the grid
         self.objects = [
-            ValuedKey("green", value=self.positive_object_reward),
-            ValuedBall("blue", value=self.negative_object_reward)
+            ValuedKey("green", value=self.key_reward),
+            ValuedBall("blue", value=self.ball_reward)
         ]
 
         for obj in self.objects:
@@ -118,6 +122,8 @@ class CollectorEnv(MiniGridEnv):
         return "Current object valuations: {}, {}".format(self.objects[0], self.objects[1])
 
     def step(self, action):
+        self.total_step_count += 1
+
         forward_cell = self.grid.get(*self.front_pos)
 
         observation, _, terminated, info = super().step(action)
@@ -129,7 +135,7 @@ class CollectorEnv(MiniGridEnv):
             self._replace_item()
 
         if self.value_update_interval:
-            if self.step_count % self.value_update_interval == 0:
+            if self.total_step_count % self.value_update_interval == 0:
                 self._switch_object_values()
                 self.mission = self._create_mission_statement()
 
@@ -155,14 +161,15 @@ class CollectorEnv(MiniGridEnv):
         self.place_obj(picked_up_item)
 
     def _switch_object_values(self):
-        for obj in self.objects:
-            self._switch_value(obj)
+        self.key_reward, self.ball_reward = self.ball_reward, self.key_reward
+        self._update_object_values()
 
-    def _switch_value(self, obj):
-        if obj.value == self.positive_object_reward:
-            obj.value = self.negative_object_reward
-        else:
-            obj.value = self.positive_object_reward
+    def _update_object_values(self):
+        for obj in self.objects:
+            if isinstance(obj, ValuedBall):
+                obj.value = self.ball_reward
+            elif isinstance(obj, ValuedKey):
+                obj.value = self.key_reward
 
 
 class CollectorEnv7x7(CollectorEnv):
