@@ -1,7 +1,6 @@
 from gym.spaces import Discrete
 from gym.vector.utils import spaces
 from gym_minigrid.minigrid import MiniGridEnv, Grid
-from gym.spaces import Discrete
 
 from collector_env.actions import Actions
 from collector_env.valued_objects import ValuedBall, ValuedKey
@@ -63,7 +62,7 @@ class CollectorEnv(MiniGridEnv):
 
     def __init__(self, size=7, agent_start_pos=(1, 1), agent_start_dir=0, positive_object_reward: float = 1.0,
                  negative_object_reward: float = -1.0, turn_reward=0., move_reward=0., bump_reward=0.,
-                 value_update_interval=None, max_steps=None, **kwargs):
+                 value_update_interval=None, max_value_updates=None, max_steps=None, **kwargs):
         self.mission = None
         self.agent_start_pos = agent_start_pos
         self.agent_start_dir = agent_start_dir
@@ -75,6 +74,8 @@ class CollectorEnv(MiniGridEnv):
         self.move_reward = move_reward
         self.bump_reward = bump_reward
         self.value_update_interval = value_update_interval
+        self.max_value_updates = max_value_updates
+        self.value_update_count = 0
 
         max_steps = max_steps if max_steps else 4 * size * size
 
@@ -135,8 +136,10 @@ class CollectorEnv(MiniGridEnv):
             self._replace_item()
 
         if self.value_update_interval:
-            if self.total_step_count % self.value_update_interval == 0:
+            if (self.max_value_updates is None or self.value_update_count < self.max_value_updates) \
+                    and self.total_step_count % self.value_update_interval == 0:
                 self._switch_object_values()
+                self.value_update_count += 1
                 self.mission = self._create_mission_statement()
 
         return observation, reward, terminated, info
@@ -177,8 +180,8 @@ class CollectorEnv7x7(CollectorEnv):
                  move_reward=0., bump_reward=0., max_steps=200, value_update_interval=None):
         super().__init__(size=7, positive_object_reward=positive_object_reward,
                          negative_object_reward=negative_object_reward, turn_reward=turn_reward,
-                         move_reward=move_reward, bump_reward=bump_reward, max_steps=max_steps,
-                         value_update_interval=value_update_interval)
+                         move_reward=move_reward, bump_reward=bump_reward, value_update_interval=value_update_interval,
+                         max_steps=max_steps)
 
 
 class CollectorEnv5x5(CollectorEnv):
@@ -186,8 +189,8 @@ class CollectorEnv5x5(CollectorEnv):
                  move_reward=0., bump_reward=0., max_steps=200, value_update_interval=None):
         super().__init__(size=5, positive_object_reward=positive_object_reward,
                          negative_object_reward=negative_object_reward, turn_reward=turn_reward,
-                         move_reward=move_reward, bump_reward=bump_reward, max_steps=max_steps,
-                         value_update_interval=value_update_interval)
+                         move_reward=move_reward, bump_reward=bump_reward, value_update_interval=value_update_interval,
+                         max_steps=max_steps)
 
         self.observation_space.spaces["image"] = spaces.Box(
             low=0,
